@@ -1,0 +1,21 @@
+image_local_path,categories,technique
+./miclib_output/images/000001.jpg,Metal or alloy,Reflected light microscopy
+./miclib_output/images/000002.jpg,Metal or alloy,Scanning electron microscopy (SEM)
+./miclib_output/images/000003.jpg,Metal or alloy,Reflected light microscopy
+./miclib_output/images/000004.jpg,Metal or alloy,Scanning electron microscopy (SEM)
+./miclib_output/images/000148.jpg,Ceramic,Reflected light microscopy
+./miclib_output/images/000149.jpg,Ceramic,Reflected light microscopy
+./miclib_output/images/000075.jpg,"Metal or alloy",Scanning electron microscopy (SEM)
+./miclib_output/images/000076.jpg,"Metal or alloy",Scanning electron microscopy (SEM)
+./miclib_output/images/000078.jpg,"Metal or alloy",Scanning electron microscopy (SEM)
+./miclib_output/images/000079.jpg,"Metal or alloy",Scanning electron microscopy (SEM)
+./miclib_output/images/000080.jpg,"Metal or alloy",Scanning electron microscopy (SEM)
+./miclib_output/images/000166.jpg,Composite,Reflected light microscopy
+./miclib_output/images/000167.jpg,Composite,Reflected light microscopy
+./miclib_output/images/000168.jpg,Composite,Reflected light microscopy
+./miclib_output/images/000169.jpg,Composite,Reflected light microscopy
+./miclib_output/images/000555.jpg,Polymer,Transmission electron microscopy (TEM)
+./miclib_output/images/000556.jpg,Polymer,Transmission electron microscopy (TEM)
+./miclib_output/images/000867.jpg,Metal or alloy,Atomic force microscopy (AFM)
+./miclib_output/images/000868.jpg,Ceramic,Atomic force microscopy (AFM)
+./miclib_output/images/000869.jpg,Ceramic,Atomic force microscopy (AFM)
