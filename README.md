@@ -102,7 +102,6 @@ query = "a scanning electron microscopy image of a ceramic"
 
 Run `mistral.ipynb` to:
 - Evaluate LLaVA-v1.6-Mistral-7B on MCQ tasks
-- Compare with CLIP zero-shot results
 
 ## 📈 UMAP Visualization
 The UMAP plot shows clustering of different microscopy techniques in the CLIP embedding space, demonstrating the model's ability to group similar imaging modalities.
