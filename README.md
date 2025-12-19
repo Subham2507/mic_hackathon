@@ -4,7 +4,7 @@ A hackathon project for automated microscopy technique classification and materi
 
 ## 🔬 Project Overview
 
-This project implements zero-shot and few-shot learning approaches to: 
+This project implements zero-shot and few-shot learning approaches to:  
 - **Classify microscopy techniques** (SEM, TEM, AFM, Optical/Reflected Light Microscopy)
 - **Categorize material types** (Metal/Alloy, Ceramic, Polymer, Composite, Fracture)
 - **Perform semantic search** on microscopy images using natural language queries
@@ -12,9 +12,9 @@ This project implements zero-shot and few-shot learning approaches to:
 
 ## 🎯 Key Features
 
-- **CLIP-based Image Embedding**: Utilizes OpenAI's CLIP (ViT-B/32) for feature extraction
+- **CLIP-based Image Embedding**:  Utilizes OpenAI's CLIP (ViT-B/32) for feature extraction
 - **Zero-shot Classification**: Achieves 53.56% accuracy on technique classification without training
-- **Vision-Language Model Evaluation**: Tests LLaVA-v1.6-Mistral-7B on multi-choice questions
+- **Vision-Language Model Evaluation**: Tests LLaVA-v1.6-Mistral-7B and Qwen3-VL-8B-Instruct on multi-choice questions
 - **UMAP Visualization**: Projects 512-dim embeddings to 2D for clustering analysis
 - **Text-to-Image Search**: Natural language queries to retrieve relevant micrographs
 
@@ -34,19 +34,28 @@ This project implements zero-shot and few-shot learning approaches to:
 | Technique MCQ | 26.1% | 25.0% | 0.103 |
 | Category MCQ | 55.6% | 25.0% | 0.179 |
 
+### Qwen3-VL-8B-Instruct Performance ⭐
+| Task | Accuracy | Balanced Accuracy | Macro F1 |
+|------|----------|-------------------|----------|
+| Technique MCQ | **91.3%** | **86.2%** | **0.888** |
+| Category MCQ | 37.8% | 38.2% | 0.329 |
+
+**Processing Time**: 3220. 61 seconds total (~63. 15 seconds per image)
+
 ## 🗂️ Repository Structure
 
 ```
 mic_hackathon/
-├── Untitled. ipynb           # CLIP embedding generation
-├── Untitled1.ipynb          # UMAP visualization & zero-shot evaluation
-├── mistral. ipynb            # LLaVA VLM MCQ evaluation
-├── clip_image_embeddings.npy      # Pre-computed CLIP features (867×512)
-├── clip_metadata_clean.csv        # Image metadata (paths, categories, techniques)
-├── micrographs_metadata.csv       # Full dataset metadata
-├── qa. csv                   # Evaluation question-answer pairs
-├── umap. png                 # UMAP projection visualization
-├── miclib_output/           # Downloaded microscopy images
+├── Untitled.ipynb            # CLIP embedding generation
+├── Untitled1.ipynb           # UMAP visualization & zero-shot evaluation
+├── mistral. ipynb             # LLaVA VLM MCQ evaluation
+├── qwen. ipynb                # Qwen3-VL-8B MCQ evaluation
+├── clip_image_embeddings.npy # Pre-computed CLIP features (867×512)
+├── clip_metadata_clean.csv   # Image metadata (paths, categories, techniques)
+├── micrographs_metadata.csv  # Full dataset metadata
+├── qa. csv                    # Evaluation question-answer pairs
+├── umap. png                  # UMAP projection visualization
+├── miclib_output/            # Downloaded microscopy images
 │   └── images/
 └── README.md
 ```
@@ -78,9 +87,9 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 # Embed images
 embeddings = []
 for image_path in image_paths:
-    image = Image.open(image_path).convert("RGB")
+    image = Image. open(image_path).convert("RGB")
     inputs = processor(images=image, return_tensors="pt")
-    features = model.get_image_features(**inputs)
+    features = model. get_image_features(**inputs)
     embeddings.append(features.numpy())
 ```
 
@@ -98,10 +107,27 @@ query = "a scanning electron microscopy image of a ceramic"
 # Returns top-5 most similar images
 ```
 
-### 3. VLM Evaluation (Optional)
+### 3. VLM Evaluation
 
+#### LLaVA Evaluation (Optional)
 Run `mistral.ipynb` to:
 - Evaluate LLaVA-v1.6-Mistral-7B on MCQ tasks
+
+#### Qwen3-VL Evaluation
+Run `qwen.ipynb` to:
+- Evaluate Qwen3-VL-8B-Instruct on technique and category MCQ tasks
+- Achieves state-of-the-art 91.3% accuracy on technique classification
+
+```python
+from transformers import Qwen3VLForConditionalGeneration, AutoProcessor
+
+model = Qwen3VLForConditionalGeneration.from_pretrained(
+    "Qwen/Qwen3-VL-8B-Instruct",
+    torch_dtype=torch. bfloat16,
+    device_map="auto"
+)
+processor = AutoProcessor. from_pretrained("Qwen/Qwen3-VL-8B-Instruct")
+```
 
 ## 📈 UMAP Visualization
 The UMAP plot shows clustering of different microscopy techniques in the CLIP embedding space, demonstrating the model's ability to group similar imaging modalities.
@@ -138,21 +164,43 @@ reducer = UMAP(
 X_2d = reducer.fit_transform(X_img)
 ```
 
+### Vision-Language Model MCQ Evaluation
+**Qwen3-VL approach** (best performing):
+1. Load Qwen3-VL-8B-Instruct model with bfloat16 precision
+2. Format image + text prompt as chat messages
+3. Generate answer with max 5 new tokens (single letter:  A/B/C/D/E)
+4. Parse predicted letter and compare with ground truth
+5. Calculate accuracy, balanced accuracy, and macro F1-score
+
 ## 📝 Key Findings
 
-1. **CLIP performs well** on technique classification (53.56% top-1, 79.81% top-2)
-2. **Category classification is harder** due to overlapping material properties
-3. **LLaVA struggles** with domain-specific microscopy knowledge
-4. **UMAP reveals clustering** of similar imaging techniques
-5. **Text-to-image search works** for semantic material queries
+1. **Qwen3-VL significantly outperforms other models** on technique classification (91.3% vs 53.56% CLIP, 26.1% LLaVA)
+2. **Balanced accuracy of 86.2%** shows robust performance across all microscopy technique classes
+3. **Category classification remains challenging** across all models (37.8% best accuracy)
+4. **CLIP performs well** on technique classification without any fine-tuning (53.56% top-1, 79.81% top-2)
+5. **LLaVA struggles** with domain-specific microscopy knowledge
+6. **UMAP reveals clustering** of similar imaging techniques
+7. **Text-to-image search works** for semantic material queries
+8. **Qwen3-VL demonstrates strong vision understanding** for scientific image analysis
+
+## 🏆 Performance Comparison
+
+| Model | Task | Accuracy | Macro F1 |
+|-------|------|----------|----------|
+| **Qwen3-VL-8B** | Technique | **91.3%** | **0.888** |
+| CLIP (zero-shot) | Technique | 53.56% | - |
+| LLaVA-v1.6-Mistral-7B | Technique | 26.1% | 0.103 |
+| **LLaVA-v1.6-Mistral-7B** | Category | **55.6%** | **0.179** |
+| Qwen3-VL-8B | Category | 37.8% | 0.329 |
+| CLIP (zero-shot) | Category | 34.56% | - |
 
 ## 🤝 Contributing
 
-This is a hackathon project.  Feel free to fork and improve! 
+This is a hackathon project.  Feel free to fork and improve!  
 
 ## 📧 Contact
 
-For questions or collaborations, reach out via GitHub issues. 
+For questions or collaborations, reach out via GitHub issues.  
 
 ## 📄 License
 
