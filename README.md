@@ -1,4 +1,4 @@
-# Microscopy Image Analysis with CLIP & Vision-Language Models
+# Unsupervised Microstructure Image Analysis and Question Answering Using CLIP and VLMs
 
 A hackathon project for automated microscopy technique classification and material categorization using CLIP embeddings and Vision-Language Models (VLMs).
 
